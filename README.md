@@ -29,7 +29,3 @@ This project implements a client-server application designed to simplify file tr
 The C# client initiates by creating a compressed ZIP archive of the specified directory. It establishes a TCP connection with the Python server, sends the ZIP file over the network, and awaits acknowledgment from the server upon successful transfer.
 
 The Python server listens for incoming connections on port 8800. Upon client connection, it spawns a new thread to handle each client separately. The server receives the ZIP file, saves it locally as `received_snapshot.rar`, and closes the connection once the transfer is complete.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
