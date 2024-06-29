@@ -18,7 +18,7 @@ This project implements a client-server application designed to simplify file tr
 
 ## Usage
 
-1. **Clone the Repository**: `git clone [<repository_url>](https://github.com/Vit8816/Snapshotter/)`
+1. **Clone the Repository**: `git clone https://github.com/Vit8816/Snapshotter`
    
 2. **Run the Server**: Execute `python server.py` to start the server listening on port 8800.
 
