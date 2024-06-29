@@ -31,12 +31,10 @@ namespace FileTransferExample
             catch (UnauthorizedAccessException ex)
             {
                 Console.WriteLine($"Unauthorized access exception: {ex.Message}");
-                // Log the exception or handle it as per your application's requirements
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception: {ex.Message}");
-                // Handle other exceptions if needed
             }
         }
 
@@ -93,7 +91,7 @@ namespace FileTransferExample
             CreateRar(rarPath);
             SendFile(host, port, rarPath);
 
-            File.Delete(rarPath); // Delete the file after sending
+            File.Delete(rarPath);
 
             Console.WriteLine("File transfer completed.");
         }
